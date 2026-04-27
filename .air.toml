@@ -7,11 +7,11 @@ tmp_dir = "tmp"
 
 [build]
 args_bin = []
-bin = "./tmp/main"
+bin = "./tmp/server"
 cmd = "go build -o ./tmp/server ./cmd/server"
 delay = 1000
 entrypoint = ["./tmp/server"]
-exclude_dir = ["frontend", "tmp", "vendor", "internal/db/generated"]
+exclude_dir = ["web", "tmp", "vendor", "internal\\db"]
 exclude_file = []
 exclude_regex = ["_test.go"]
 exclude_unchanged = false

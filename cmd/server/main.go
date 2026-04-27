@@ -1,7 +1,23 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/config"
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/database"
+)
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello! This is my first go backend project!!")
+}
 
 func main() {
-	fmt.Println("Hello World")
+	cfg := config.Load()
+	db := database.Connect(cfg)
+
+	http.HandleFunc("/", helloHandler)
+
+	fmt.Println("Server starting on port 8080.....")
+	http.ListenAndServe(":8080", nil)
 }

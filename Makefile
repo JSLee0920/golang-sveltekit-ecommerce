@@ -1,4 +1,4 @@
-.PHONY: dev-backend dev-frontend build test migrate-up migrate-down migrate-status sqlc docker-up docker-down
+.PHONY: dev-backend dev-frontend build test migrate-up migrate-down migrate-status sqlc docker-up docker-down docker-start docker-stop
 
 include .env
 export
@@ -38,3 +38,9 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+docker-start:
+	docker compose start
+
+docker-stop:
+	docker compose stop

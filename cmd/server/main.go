@@ -14,7 +14,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	cfg := config.Load()
-	db := database.Connect(cfg)
+	db := database.ConnectPostgres(cfg)
+	rdb := database.ConnectRedis(cfg)
 
 	http.HandleFunc("/", helloHandler)
 

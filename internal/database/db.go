@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func Connect(cfg *config.Config) *pgxpool.Pool {
+func ConnectPostgres(cfg *config.Config) *pgxpool.Pool {
 	pool, err := pgxpool.New(context.Background(), cfg.DatabaseURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)

@@ -9,12 +9,14 @@ import (
 )
 
 func ConnectPostgres(cfg *config.Config) *pgxpool.Pool {
-	pool, err := pgxpool.New(context.Background(), cfg.DatabaseURL)
+	ctx := context.Background()
+
+	pool, err := pgxpool.New(ctx, cfg.DatabaseURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}
 
-	if err := pool.Ping(context.Background()); err != nil {
+	if err := pool.Ping(ctx); err != nil {
 		log.Fatalf("Failed to ping DB: %v", err)
 	}
 

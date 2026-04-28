@@ -14,9 +14,11 @@ func ConnectRedis(cfg *config.Config) *redis.Client {
 		log.Fatalf("Failed to parse Redis URL: %v", err)
 	}
 
+	ctx := context.Background()
+
 	redisClient := redis.NewClient(opts)
 
-	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+	if err := redisClient.Ping(ctx).Err(); err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
 	}
 

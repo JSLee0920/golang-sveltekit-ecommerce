@@ -17,6 +17,9 @@ func main() {
 	db := database.ConnectPostgres(cfg)
 	rdb := database.ConnectRedis(cfg)
 
+	defer db.Close()
+	defer rdb.Close()
+
 	http.HandleFunc("/", helloHandler)
 
 	fmt.Println("Server starting on port 8080.....")

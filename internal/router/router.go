@@ -20,12 +20,12 @@ func Register(userSvc *service.UserService, cfg *config.Config) http.Handler {
 		middleware.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
 
-	mux.HandleFunc("POST /api/vi/auth/register", userHandler.Register)
-	mux.HandleFunc("POST /api/vi/auth/login", userHandler.Login)
-	mux.HandleFunc("POST /api/vi/auth/logout", userHandler.Logout)
+	mux.HandleFunc("POST /api/v1/auth/register", userHandler.Register)
+	mux.HandleFunc("POST /api/v1/auth/login", userHandler.Login)
+	mux.HandleFunc("POST /api/v1/auth/logout", userHandler.Logout)
 
-	mux.Handle("GET /api/vi/users/me", jwt(http.HandlerFunc(userHandler.GetMe)))
-	mux.Handle("PUT /api/vi/users/me", jwt(http.HandlerFunc(userHandler.UpdateMe)))
+	mux.Handle("GET /api/v1/users/me", jwt(http.HandlerFunc(userHandler.GetMe)))
+	mux.Handle("PUT /api/v1/users/me", jwt(http.HandlerFunc(userHandler.UpdateMe)))
 
 	return middleware.CORS(middleware.Logger(mux))
 }

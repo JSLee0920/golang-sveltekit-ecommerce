@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/db/generated"
@@ -21,8 +22,12 @@ func NewUserRepository(db *pgxpool.Pool, queries *generated.Queries, rdb *redis.
 	return &UserRepository{db: db, queries: queries, rdb: rdb}
 }
 
+func userIDCacheKey(id pgtype.UUID) string {
+	return fmt.Sprintf("user:id:%x", id.Bytes)
+}
+
 func (r *UserRepository) GetByID(ctx context.Context, id pgtype.UUID) (*generated.User, error) {
-	cacheKey := "user:id" + id.String()
+	cacheKey := userIDCacheKey(id)
 
 	cached, err := r.rdb.Get(ctx, cacheKey).Result()
 	if err == nil {
@@ -81,7 +86,7 @@ func (r *UserRepository) Update(ctx context.Context, params generated.UpdateUser
 	}
 
 	// invalidate cache
-	r.rdb.Del(ctx, "user:id:"+user.ID.String())
+	r.rdb.Del(ctx, userIDCacheKey(user.ID))
 	r.rdb.Del(ctx, "user:email:"+user.Email)
 
 	return &user, nil
@@ -99,7 +104,7 @@ func (r *UserRepository) Delete(ctx context.Context, id pgtype.UUID) error {
 	}
 
 	// invalidate cache
-	r.rdb.Del(ctx, "user:id:"+id.String())
+	r.rdb.Del(ctx, userIDCacheKey(id))
 	r.rdb.Del(ctx, "user:email:"+user.Email)
 
 	return nil

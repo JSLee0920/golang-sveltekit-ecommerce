@@ -46,7 +46,7 @@ type Querier interface {
 	GetSupplierByID(ctx context.Context, id pgtype.UUID) (Supplier, error)
 	GetSupplierByUserID(ctx context.Context, userID pgtype.UUID) (Supplier, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
-	GetUserById(ctx context.Context, id pgtype.UUID) (User, error)
+	GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 	ListAddressesByUser(ctx context.Context, userID pgtype.UUID) ([]Address, error)
 	ListAllOrders(ctx context.Context, arg ListAllOrdersParams) ([]Order, error)
 	ListBrands(ctx context.Context) ([]Brand, error)

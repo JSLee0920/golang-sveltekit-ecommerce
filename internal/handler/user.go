@@ -9,7 +9,7 @@ import (
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/db/generated"
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/middleware"
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/service"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 

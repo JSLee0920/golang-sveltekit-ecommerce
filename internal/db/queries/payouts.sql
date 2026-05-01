@@ -19,7 +19,7 @@ ORDER BY created_at DESC
 LIMIT $1 OFFSET $2;
 
 -- name: CreatePayout :one
-INSERT INTO payouts (supplier_id, order_detail_id, amount, commission)
+INSERT INTO payouts (supplier_id, order_detail_id, amount_cents, commission_cents)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
 

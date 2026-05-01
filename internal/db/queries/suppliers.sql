@@ -2,7 +2,7 @@
 SELECT * FROM suppliers
 WHERE id = $1;
 
--- name: GetSupplierByUserID: one
+-- name: GetSupplierByUserID :one
 SELECT * FROM suppliers
 WHERE user_id = $1;
 

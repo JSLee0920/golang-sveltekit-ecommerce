@@ -10,7 +10,7 @@ WHERE slug = $1;
 SELECT count(*) FROM products
 WHERE active = true;
 
--- name: ListProducts: many
+-- name: ListProducts :many
 SELECT * FROM products 
 WHERE active = true
 ORDER BY created_at DESC

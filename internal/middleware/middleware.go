@@ -64,7 +64,15 @@ func JWTProtected(cfg *config.Config) func(http.Handler) http.Handler {
 				return
 			}
 
-			claims := token.Claims.(jwt.MapClaims)
+			claims, ok := token.Claims.(jwt.MapClaims)
+			if !ok {
+				JSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid token claims"})
+			}
+
+			role, ok := claims["role"].(string)
+			if !ok {
+				JSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid token"})
+			}
 
 			// parse user id into pgtype.UUID
 			var userID pgtype.UUID
@@ -75,7 +83,7 @@ func JWTProtected(cfg *config.Config) func(http.Handler) http.Handler {
 
 			// store in context
 			ctx := context.WithValue(r.Context(), ContextUserID, userID)
-			ctx = context.WithValue(ctx, ContextRole, claims["role"].(string))
+			ctx = context.WithValue(ctx, ContextRole, role)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

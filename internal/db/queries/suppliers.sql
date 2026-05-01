@@ -8,7 +8,11 @@ WHERE user_id = $1;
 
 -- name: ListSuppliers :many
 SELECT * FROM suppliers
-ORDER BY created_at DESC;
+ORDER BY created_at DESC
+LIMIT $1 OFFSET $2;
+
+-- name: CountSuppliers :one
+SELECT COUNT(*) FROM suppliers;
 
 -- name: CreateSupplier :one
 INSERT INTO suppliers (user_id, business_name, email, phone, address)

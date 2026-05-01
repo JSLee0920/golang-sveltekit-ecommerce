@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/config"
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/db/generated"
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/middleware"
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/service"
 	"github.com/golang-jwt/jwt"
@@ -17,6 +18,26 @@ type UserHandler struct {
 	cfg *config.Config
 }
 
+type UserResponse struct {
+	ID        pgtype.UUID        `json:"id"`
+	Name      string             `json:"name"`
+	Email     string             `json:"email"`
+	Role      string             `json:"role"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+func toUserResponse(user *generated.User) UserResponse {
+	return UserResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+}
+
 func NewUserHandler(svc *service.UserService, cfg *config.Config) *UserHandler {
 	return &UserHandler{svc: svc, cfg: cfg}
 }
@@ -26,7 +47,6 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
-		Role     string `json:"role"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -39,18 +59,13 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Set default role to customer if not provided
-	if body.Role == "" {
-		body.Role = "customer"
-	}
-
-	user, err := h.svc.Create(r.Context(), body.Name, body.Email, body.Password, body.Role)
+	user, err := h.svc.Create(r.Context(), body.Name, body.Email, body.Password, "customer")
 	if err != nil {
 		middleware.JSON(w, http.StatusConflict, map[string]string{"error": err.Error()})
 		return
 	}
 
-	middleware.JSON(w, http.StatusCreated, user)
+	middleware.JSON(w, http.StatusCreated, toUserResponse(user))
 }
 
 func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +117,7 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(24 * time.Hour),
 	})
 
-	middleware.JSON(w, http.StatusOK, user)
+	middleware.JSON(w, http.StatusOK, toUserResponse(user))
 }
 
 func (h *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +142,7 @@ func (h *UserHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	middleware.JSON(w, http.StatusOK, user)
+	middleware.JSON(w, http.StatusOK, toUserResponse(user))
 }
 
 func (h *UserHandler) UpdateMe(w http.ResponseWriter, r *http.Request) {
@@ -152,5 +167,5 @@ func (h *UserHandler) UpdateMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	middleware.JSON(w, http.StatusOK, user)
+	middleware.JSON(w, http.StatusOK, toUserResponse(user))
 }

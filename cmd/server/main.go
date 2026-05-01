@@ -1,27 +1,34 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/config"
 	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/database"
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/db/generated"
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/repository"
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/router"
+	"github.com/JSLee0920/golang-sveltekit-ecommerce/internal/service"
 )
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello! This is my first go backend project!!")
-}
 
 func main() {
 	cfg := config.Load()
-	db := database.ConnectPostgres(cfg)
-	rdb := database.ConnectRedis(cfg)
 
+	db := database.ConnectPostgres(cfg)
 	defer db.Close()
+
+	rdb := database.ConnectRedis(cfg)
 	defer rdb.Close()
 
-	http.HandleFunc("/", helloHandler)
+	queries := generated.New(db)
 
-	fmt.Println("Server starting on port 8080.....")
-	http.ListenAndServe(":8080", nil)
+	userRepo := repository.NewUserRepository(db, queries, rdb)
+
+	userSvc := service.NewUserService(userRepo)
+
+	mux := router.Register(userSvc, cfg)
+
+	log.Printf("Server running on :%s", cfg.AppPort)
+	log.Fatal(http.ListenAndServe(":"+cfg.AppPort, mux))
 }
